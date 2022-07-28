@@ -4,6 +4,7 @@ import { BodyType } from "@microsoft/msgraph-sdk-javascript/lib/src/models/bodyT
 
 
 async function  test() {
+    console.log(process.env.ACCESS_TOKEN);
     const authProvider = new SimpleAuthenticationProvider(async() => { return process.env.ACCESS_TOKEN! });
     
     const client = GraphServiceClient.init({authProvider});
@@ -29,5 +30,5 @@ async function  test() {
     console.log(myEvent!);
 }
 
-test();
+test().catch((e) => console.error(e));
 console.log("Hello Microsoft Graph!");
