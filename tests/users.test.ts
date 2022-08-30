@@ -3,13 +3,14 @@ import "@microsoft/microsoft-graph-client/users"
 import { MicrosoftGraphUser } from "@microsoft/microsoft-graph-types";
 import * as chai from 'chai'    
 import chaiAsPromised from 'chai-as-promised'
+import { v4 as uuid } from 'uuid';
 
 chai.use(chaiAsPromised);
 
 describe('/users', () => {
     let graphTypedRestClient: GraphRestSDKClient;
     let newUserId: string;
-    const randomId: string = "cbb2e86c-44bc-4532-8440-9cdbed796789";
+    const randomId: string = uuid();
     const timestamp: number = Date.now();
 
     beforeEach(() => {
