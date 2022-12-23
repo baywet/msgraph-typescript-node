@@ -1,0 +1,28 @@
+{
+  "descriptionHash": "7F2DA772FE468A053DE675695D6B1330CBE597A73A3217162D13C87ABF3574382645138D4EBB305550629F61E65AAF405519365A29D6FF1B78E60D2F6A84D88C",
+  "descriptionLocation": "https://raw.githubusercontent.com/microsoftgraph/msgraph-sdk-powershell/dev/openApiDocs/beta/Users.yml",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "0.8.3.0",
+  "clientClassName": "ApiClient",
+  "clientNamespaceName": "ApiSdk",
+  "language": "TypeScript",
+  "usesBackingStore": false,
+  "includeAdditionalData": true,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Text.TextParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json",
+    "application/xml",
+    "text/plain",
+    "text/xml",
+    "text/yaml"
+  ],
+  "includePatterns": [],
+  "excludePatterns": []
+}
