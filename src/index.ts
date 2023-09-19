@@ -2,9 +2,6 @@ import "isomorphic-fetch";
 import { DeviceCodeCredential } from "@azure/identity";
 import { Client, MiddlewareFactory } from "@microsoft/microsoft-graph-client";
 import { TokenCredentialAuthenticationProvider } from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials";
-import { getAll } from "./tasks/PageIterator";
-import { getMe } from "./operations/get";
-import { DebugMiddleware } from "./middlewares/DebugMiddleware";
 import { ProxyMiddleware } from "./middlewares/ProxyMiddleware";
 
 const credential = new DeviceCodeCredential({
@@ -15,14 +12,10 @@ const credential = new DeviceCodeCredential({
 });
 
 const authProvider = new TokenCredentialAuthenticationProvider(credential, {
-  scopes: ["User.Read.All"],
+  scopes: ["User.Read"],
 });
 
 const middleware = MiddlewareFactory.getDefaultMiddlewareChain(authProvider);
-
-if (process.env.DEBUG) {
-  middleware.splice(-1, 0, ...[new DebugMiddleware()]);
-}
 
 if (process.env.HTTPS_PROXY || process.env.HTTP_PROXY) {
   middleware.splice(
@@ -37,8 +30,8 @@ const client = Client.initWithMiddleware({
 });
 
 async function main(client: Client) {
-  await getMe(client);
-  await getAll(client, "/users?$top=5");
+  const result = await client.api("/me").get();
+  console.log(result);
 }
 
 main(client).catch((error) => {

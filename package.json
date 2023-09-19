@@ -14,7 +14,7 @@
   "scripts": {
     "proxy": "m365proxy -a 429 -f 50",
     "start": "npx ts-node src/index.ts",
-    "start:proxy": "cross-env DEBUG=true HTTP_PROXY=http://127.0.0.1:8000 HTTPS_PROXY=http://127.0.0.1:8000 npm-run-all --parallel proxy start"
+    "start:proxy": "cross-env HTTP_PROXY=http://127.0.0.1:8000 HTTPS_PROXY=http://127.0.0.1:8000 npm-run-all --parallel proxy start"
   },
   "repository": {
     "type": "git",
