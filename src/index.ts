@@ -11,13 +11,14 @@ const credential = new DeviceCodeCredential({
 
 const scopes = ["User.Read.All"];
 const authProvider = new AzureIdentityAuthenticationProvider(credential, scopes);
-
 const graphServiceClient = GraphServiceClient.init({ authProvider });
 
-graphServiceClient.users.get().then((result) => {
-  console.log(result);
-});
+async function main() {
+  const fullUsers = await graphServiceClient.users.get();
+  console.log(fullUsers);
+  
+  const lightUsers = await graphServiceClient.users.get({ queryParameters: { select: ["displayName"] } });
+  console.log(lightUsers);
+}
 
-graphServiceClient.users.get({ queryParameters: { select: ["displayName"] } }).then((result) => {
-  console.log(result);
-});
+main().catch((e) => console.error(e));
