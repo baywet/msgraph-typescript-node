@@ -15,12 +15,7 @@ module.exports = {
     ],
   },
   plugins: [
-    new Dotenv(),
-    new BundleAnalyzerPlugin({
-      analyzerMode: 'static',
-      reportFilename: 'bundle.html',
-      openAnalyzer: false
-    })
+    new Dotenv()
   ],
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
