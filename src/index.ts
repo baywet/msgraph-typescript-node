@@ -1,5 +1,5 @@
 import { DeviceCodeCredential } from "@azure/identity";
-import { GraphBaseServiceClient } from "@microsoft/msgraph-sdk-javascript";
+import { GraphServiceClient } from "@microsoft/msgraph-sdk-javascript";
 import { AzureIdentityAuthenticationProvider } from '@microsoft/kiota-authentication-azure';
 
 const credential = new DeviceCodeCredential({
@@ -12,4 +12,8 @@ const credential = new DeviceCodeCredential({
 const scopes = ["User.Read.All"];
 const authProvider = new AzureIdentityAuthenticationProvider(credential, scopes);
 
-const graphServiceClient = GraphServiceClient.init(authProvider);
+const graphServiceClient = GraphServiceClient.init({ authProvider });
+
+graphServiceClient.users.get().then((result) => {
+  console.log(result);
+});
