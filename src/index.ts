@@ -1,7 +1,6 @@
-import "isomorphic-fetch";
 import { DeviceCodeCredential } from "@azure/identity";
-import { Client, ClientOptions } from "@microsoft/microsoft-graph-client";
-import { TokenCredentialAuthenticationProvider } from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials";
+import { GraphBaseServiceClient } from "@microsoft/msgraph-sdk-javascript";
+import { AzureIdentityAuthenticationProvider } from '@microsoft/kiota-authentication-azure';
 
 const credential = new DeviceCodeCredential({
   clientId: "8863da3d-adbf-4a05-8f30-87bab9f76292",
@@ -10,21 +9,7 @@ const credential = new DeviceCodeCredential({
   },
 });
 
-const authProvider = new TokenCredentialAuthenticationProvider(credential, {
-  scopes: ["User.Read"],
-});
+const scopes = ["User.Read.All"];
+const authProvider = new AzureIdentityAuthenticationProvider(credential, scopes);
 
-let clientOptions: ClientOptions = {
-  authProvider: authProvider,
-};
-
-const client = Client.initWithMiddleware(clientOptions);
-
-async function main(client: Client) {
-  const res = await client.api(`me`).get();
-  console.log(res);
-}
-
-main(client).catch((error) => {
-  console.log(error);
-});
+const graphServiceClient = GraphServiceClient.init(authProvider);
