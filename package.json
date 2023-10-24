@@ -7,11 +7,15 @@
     "@azure/identity": "^3.3.0",
     "@microsoft/kiota-authentication-azure": "^1.0.0-preview.24",
     "@microsoft/msgraph-sdk-javascript": "^1.0.0-preview.6",
-    "ts-node": "^10.9.1",
-    "typescript": "^4.7.4"
+    "hpagent": "^1.2.0",
+    "dotenv": "^16.0.1"
   },
   "scripts": {
-    "start": "npx ts-node src/index.ts"
+    "proxy": "m365proxy -a 429 -f 50",
+    "start": "npm run build:dev && node './dist/bundle.js'",
+    "build:dev": "webpack --config webpack.dev.js",
+    "build:prod": "webpack --config webpack.prod.js",    
+    "start:proxy": "cross-env DEBUG=true HTTP_PROXY=http://127.0.0.1:8000 HTTPS_PROXY=http://127.0.0.1:8000 npm-run-all --parallel proxy start"
   },
   "repository": {
     "type": "git",
@@ -22,5 +26,16 @@
   "bugs": {
     "url": "https://github.com/sebastienlevert/msgraph-typescript-node/issues"
   },
-  "homepage": "https://github.com/sebastienlevert/msgraph-typescript-node#readme"
+  "homepage": "https://github.com/sebastienlevert/msgraph-typescript-node#readme",
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.2.2",
+    "webpack": "^5.74.0",
+    "webpack-bundle-analyzer": "^4.5.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-merge": "^5.8.0",
+    "dotenv-webpack": "^8.0.0",
+    "ts-loader": "^9.3.1"
+  }
 }

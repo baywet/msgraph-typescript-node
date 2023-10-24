@@ -1,27 +1,25 @@
-import { Middleware, Context } from "@microsoft/msgraph-sdk-javascript";
+import { RequestOption } from "@microsoft/kiota-abstractions";
+import { Middleware } from "@microsoft/kiota-http-fetchlibrary";
 import { HttpsProxyAgent } from "hpagent";
 
 export class ProxyMiddleware implements Middleware {
   private url: string;
-
-  private nextMiddleware!: Middleware;
+  public next: Middleware | undefined;
 
   public constructor(url: string = "http://localhost:8000") {
     this.url = url;
   }
 
-  public async execute(context: Context): Promise<void> {
-    if (context.options) {
-      context.options.agent = new HttpsProxyAgent({
+
+
+  public async execute(url: string, requestInit: RequestInit, requestOptions?: Record<string, RequestOption>): Promise<Response> {
+    if (requestInit) {
+      /*requestInit["agent"] = new HttpsProxyAgent({
         proxy: this.url,
         rejectUnauthorized: false,
-      });
+      });*/
     }
 
-    return await this.nextMiddleware.execute(context);
-  }
-
-  public setNext(next: Middleware): void {
-    this.nextMiddleware = next;
+    return await this.next?.execute(url, requestInit, requestOptions) ?? Promise.reject(new Error("The next middleware is not set."));
   }
 }
