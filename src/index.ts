@@ -17,3 +17,7 @@ const graphServiceClient = GraphServiceClient.init({ authProvider });
 graphServiceClient.users.get().then((result) => {
   console.log(result);
 });
+
+graphServiceClient.users.get({ queryParameters: { select: ["displayName"] } }).then((result) => {
+  console.log(result);
+});
