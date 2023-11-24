@@ -16,13 +16,13 @@ const authProvider = new AzureIdentityAuthenticationProvider(credential, scopes)
 
 const middlewareChain = MiddlewareFactory.getDefaultMiddlewareChain();
 
-if (process.env.HTTPS_PROXY || process.env.HTTP_PROXY) {
+/*if (process.env.HTTPS_PROXY || process.env.HTTP_PROXY) {
   middlewareChain.splice(
     -1,
     0,
     ...[new ProxyMiddleware(process.env.HTTPS_PROXY ?? process.env.HTTP_PROXY)]
   );
-}
+}*/
 
 const graphServiceClient = GraphServiceClient.init({ 
   middleware: middlewareChain, 
