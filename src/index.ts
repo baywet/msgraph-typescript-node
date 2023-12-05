@@ -8,9 +8,10 @@ import { ProxyMiddleware } from './middlewares/ProxyMiddleware';
 import { Headers } from '@microsoft/kiota-abstractions';
 import { HttpsProxyAgent } from 'hpagent';
 import { FetchRequestAdapter } from '@microsoft/kiota-http-fetchlibrary';
+import { UserRequests } from './users/UserRequests';
 
 const clientId = process.env.CLIENT_ID ?? '8863da3d-adbf-4a05-8f30-87bab9f76292';
-const scopes = ['User.Read.All'];
+const scopes = [...UserRequests.allScopes];
 const userId = process.env.USER_ID ?? '02b1868e-37e7-4c0e-a956-846dadaab298';
 
 useIdentityPlugin(cachePersistencePlugin);
@@ -49,36 +50,7 @@ const graphServiceClient = GraphServiceClient.init({
 });
 
 async function main() {
-  await graphServiceClient.users.get();
-
-  await graphServiceClient.users.get({
-    queryParameters: {
-      select: ['displayName', 'id', 'mail', 'jobTitle'],
-      top: 50,
-      filter: "startswith(displayName, 'S')",
-      orderby: ['displayName'],
-      count: true,
-    },
-    headers: new Headers([['ConsistencyLevel', new Set(['Eventual'])]]),
-  });
-
-  await graphServiceClient.users.byUserId(userId).get();
-  /*await graphServiceClient.users.byUserId('').sendMail.post({
-    message: {
-      subject: "Test",
-      body: {
-        content: "<b>Test</b>",
-        contentType: BodyType.Html
-      },
-      toRecipients: [
-        {
-          emailAddress: {
-            address: "admin"
-          }
-        }
-      ]
-    }
-  });*/
+  await UserRequests.execute(graphServiceClient);
 }
 
 main().catch(e => console.error(e));

@@ -26,12 +26,18 @@ export class DebugMiddleware implements Middleware {
 
   private log(title: string, content?: any) {
     console.log(title);
-    content && console.log(JSON.stringify(content, null, 2));
+
+    if (content) {
+      console.log(JSON.stringify(content, null, 2));
+    }
   }
 
   private async getBody(response: Response) {
     return (
-      response.headers.get('content-type')!.startsWith('application/json') && response.body && (await response.json())
+      (response.headers.get('content-type')?.startsWith('application/json') &&
+        response.body &&
+        (await response.json())) ??
+      {}
     );
   }
 
@@ -43,6 +49,7 @@ export class DebugMiddleware implements Middleware {
     this.log('=== Request ===');
     this.log(`${requestInit.method} ${url}`);
     this.log('Headers', this.getHeaders(requestInit.headers as Headers));
+    requestInit.body && this.log('Body', JSON.parse(new TextDecoder().decode(requestInit.body as Uint8Array)));
     this.log('');
 
     const response =
