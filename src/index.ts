@@ -4,9 +4,12 @@ import { AzureIdentityAuthenticationProvider } from '@microsoft/kiota-authentica
 import { MiddlewareFactory } from '@microsoft/kiota-http-fetchlibrary';
 import { DebugMiddleware } from './middlewares/DebugMiddleware';
 import { cachePersistencePlugin } from '@azure/identity-cache-persistence';
+import { ProxyMiddleware } from './middlewares/ProxyMiddleware';
+import { Headers } from '@microsoft/kiota-abstractions';
+import { HttpsProxyAgent } from 'hpagent';
+import { FetchRequestAdapter } from '@microsoft/kiota-http-fetchlibrary';
 
-const clientId =
-  process.env.CLIENT_ID ?? '8863da3d-adbf-4a05-8f30-87bab9f76292';
+const clientId = process.env.CLIENT_ID ?? '8863da3d-adbf-4a05-8f30-87bab9f76292';
 const scopes = ['User.Read.All'];
 const userId = process.env.USER_ID ?? '02b1868e-37e7-4c0e-a956-846dadaab298';
 
@@ -21,30 +24,28 @@ const credential = new DeviceCodeCredential({
     console.log(info.message);
   },
 });
-const authProvider = new AzureIdentityAuthenticationProvider(
-  credential,
-  scopes,
-);
+const authProvider = new AzureIdentityAuthenticationProvider(credential, scopes);
 
 const middlewareChain = MiddlewareFactory.getDefaultMiddlewareChain();
 
-/*if (process.env.HTTPS_PROXY || process.env.HTTP_PROXY) {
-  middlewareChain.splice(
-    -1,
-    0,
-    ...[new ProxyMiddleware(process.env.HTTPS_PROXY ?? process.env.HTTP_PROXY)]
-  );
-}*/
+//if (process.env.HTTPS_PROXY || process.env.HTTP_PROXY) {
+middlewareChain.splice(-1, 0, ...[new ProxyMiddleware(process.env.HTTPS_PROXY ?? process.env.HTTP_PROXY)]);
+//}
 
-middlewareChain.splice(
-  middlewareChain.length - 1,
-  0,
-  ...[new DebugMiddleware()],
-);
+middlewareChain.splice(middlewareChain.length - 1, 0, ...[new DebugMiddleware(true)]);
 
 const graphServiceClient = GraphServiceClient.init({
   middleware: middlewareChain,
   authProvider: authProvider,
+  fetchOptions:
+    process.env.HTTPS_PROXY || process.env.HTTP_PROXY
+      ? {
+          agent: new HttpsProxyAgent({
+            proxy: process.env.HTTPS_PROXY!,
+            rejectUnauthorized: false,
+          }),
+        }
+      : undefined,
 });
 
 async function main() {
@@ -54,11 +55,11 @@ async function main() {
     queryParameters: {
       select: ['displayName', 'id', 'mail', 'jobTitle'],
       top: 50,
-      //count: true,
-      //search: "",
       filter: "startswith(displayName, 'S')",
-      orderby: ['displayName asc'],
+      orderby: ['displayName'],
+      count: true,
     },
+    headers: new Headers([['ConsistencyLevel', new Set(['Eventual'])]]),
   });
 
   await graphServiceClient.users.byUserId(userId).get();

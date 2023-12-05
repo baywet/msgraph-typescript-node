@@ -13,13 +13,13 @@
   },
   "scripts": {
     "clean": "rimraf ./node_modules && rimraf ./dist && rimraf ./package-lock.json",
-    "proxy": "m365proxy -a 429 -f 50",
+    "proxy": "devproxy -a 429 -f 50",
     "start": "npx ts-node ./src/index.ts",
     "start:dev": "npm run build:dev && node './dist/bundle.js'",
     "start:prod": "npm run build:prod && node './dist/bundle.js'",
     "build:dev": "webpack --config webpack.dev.js",
     "build:prod": "webpack --config webpack.prod.js",
-    "start:proxy": "cross-env DEBUG=true HTTP_PROXY=http://127.0.0.1:8000 HTTPS_PROXY=http://127.0.0.1:8000 npm-run-all --parallel proxy start"
+    "start:proxy": "cross-env DEBUG=true HTTP_PROXY=http://127.0.0.1:8000 HTTPS_PROXY=http://127.0.0.1:8000 npm-run-all start"
   },
   "repository": {
     "type": "git",

@@ -6,7 +6,7 @@ export class ProxyMiddleware implements Middleware {
   private url: string;
   public next: Middleware | undefined;
 
-  public constructor(url: string = 'http://localhost:8000') {
+  public constructor(url: string = 'http://127.0.0.1:8000') {
     this.url = url;
   }
 
