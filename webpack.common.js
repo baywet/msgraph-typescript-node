@@ -1,9 +1,10 @@
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin =
+  require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const Dotenv = require('dotenv-webpack');
 const path = require('path');
 
 module.exports = {
-  target: "node",
+  target: 'node',
   entry: path.resolve(__dirname, './src/index.ts'),
   module: {
     rules: [
@@ -12,16 +13,15 @@ module.exports = {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
+      [{ test: /\.node$/, loader: 'node-loader' }],
     ],
   },
-  plugins: [
-    new Dotenv()
-  ],
+  plugins: [new Dotenv()],
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, 'dist'),
   },
 };
