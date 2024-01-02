@@ -1,17 +1,11 @@
 import { DeviceCodeCredential, useIdentityPlugin } from '@azure/identity';
-import { GraphServiceClient } from '@microsoft/msgraph-sdk-javascript';
 import { AzureIdentityAuthenticationProvider } from '@microsoft/kiota-authentication-azure';
-import { MiddlewareFactory } from '@microsoft/kiota-http-fetchlibrary';
-import { DebugMiddleware } from './middlewares/DebugMiddleware';
 import { cachePersistencePlugin } from '@azure/identity-cache-persistence';
-import { ProxyMiddleware } from './middlewares/ProxyMiddleware';
-import { Headers } from '@microsoft/kiota-abstractions';
-import { HttpsProxyAgent } from 'hpagent';
 import { FetchRequestAdapter } from '@microsoft/kiota-http-fetchlibrary';
-import { UserRequests } from './users/UserRequests';
+import { GraphClient } from './generated/graphClient';
 
 const clientId = process.env.CLIENT_ID ?? '8863da3d-adbf-4a05-8f30-87bab9f76292';
-const scopes = [...UserRequests.allScopes];
+const scopes = ['User.Read.All', 'Mail.Send'];
 const userId = process.env.USER_ID ?? '02b1868e-37e7-4c0e-a956-846dadaab298';
 
 useIdentityPlugin(cachePersistencePlugin);
@@ -25,32 +19,30 @@ const credential = new DeviceCodeCredential({
     console.log(info.message);
   },
 });
+
 const authProvider = new AzureIdentityAuthenticationProvider(credential, scopes);
 
-const middlewareChain = MiddlewareFactory.getDefaultMiddlewareChain();
+/*const middlewareChain = MiddlewareFactory.getDefaultMiddlewareChain();
+middlewareChain.splice(middlewareChain.length - 1, 0, ...[new DebugMiddleware(true)]);*/
 
-if (process.env.HTTPS_PROXY || process.env.HTTP_PROXY) {
-  middlewareChain.splice(-1, 0, ...[new ProxyMiddleware(process.env.HTTPS_PROXY ?? process.env.HTTP_PROXY)]);
-}
-
-middlewareChain.splice(middlewareChain.length - 1, 0, ...[new DebugMiddleware(true)]);
-
-const graphServiceClient = GraphServiceClient.init({
-  middleware: middlewareChain,
-  authProvider: authProvider,
-  fetchOptions:
-    process.env.HTTPS_PROXY || process.env.HTTP_PROXY
-      ? {
-          agent: new HttpsProxyAgent({
-            proxy: process.env.HTTPS_PROXY!,
-            rejectUnauthorized: false,
-          }),
-        }
-      : undefined,
-});
+const fetchRequestAdapter = new FetchRequestAdapter(authProvider);
 
 async function main() {
-  await UserRequests.execute(graphServiceClient);
+  const graphClient = new GraphClient(fetchRequestAdapter);
+  const catalogs = await graphClient.appCatalogs.get();
+  console.log(catalogs);
+
+  /*const results = await graphClient.search.query.post({
+    requests: [{ entityTypes: ['person'], query: { queryString: 'displayName:John' } }],
+  });
+  console.log(results);
+
+  await graphClient.users.byUserId(userId).sendMail.post({
+    message: {
+      subject: 'Hello World!',
+      toRecipients: [{ emailAddress: { address: me?.mail ?? '' } }],
+    },
+  });*/
 }
 
 main().catch(e => console.error(e));

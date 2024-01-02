@@ -131,3 +131,4 @@ dist
 
 # package locks
 package-lock.json
+.kiota
