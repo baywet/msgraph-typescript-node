@@ -5,8 +5,6 @@
   "main": "index.js",
   "sideEffects": false,
   "dependencies": {
-    "@azure/identity": "^3.4.1",
-    "@azure/identity-cache-persistence": "^1.0.0",
     "@microsoft/kiota-abstractions": "*",
     "@microsoft/kiota-authentication-azure": "*",
     "@microsoft/kiota-http-fetchlibrary": "*",
@@ -14,6 +12,7 @@
     "@microsoft/kiota-serialization-json": "*",
     "@microsoft/kiota-serialization-multipart": "*",
     "@microsoft/kiota-serialization-text": "*",
+    "@microsoft/msgraph-sdk-javascript": "file:../msgraph-sdk-typescript",
     "dotenv": "^16.0.1",
     "guid-typescript": "^1.0.9",
     "hpagent": "^1.2.0"
@@ -63,7 +62,7 @@
     "typescript": "^5.2.2",
     "webpack": "^5.74.0",
     "webpack-bundle-analyzer": "^4.5.0",
-    "webpack-cli": "^4.10.0",
+    "webpack-cli": "^5.1.4",
     "webpack-merge": "^5.8.0"
   }
 }
